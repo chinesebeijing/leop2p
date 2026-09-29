@@ -1,0 +1,1 @@
+{"name":"P2P Explorer","short_name":"P2P Explorer","start_url":"./","display":"standalone","background_color":"#f5f5f5","lang":"en","scope":"./","description":"P2P文件传输与浏览工具","theme_color":"#f5f5f5","icons":[{"src":"/static/icon64.png","sizes":"64x64","type":"image/png"},{"src":"/static/icon256.png","sizes":"256x256","type":"image/png"}]}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') ||
+      CSS.supports('top: constant(a)'))
+    document.write(
+      '<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' +
+      (coverSupport ? ', viewport-fit=cover' : '') + '" />')
+  </script>
+  <link rel="icon" href="https://unimg.leoi.org/img/1778403354202_MikuLeo64x64.png" />
+  <meta name="keywords" content="Leop2p webrtc p2p file transfer peerjs" />
+  <meta name="description" content="Leop2p - P2P文件传输与浏览工具" />
+  <title>Leop2p</title>
+  <script type="module" crossorigin src="./assets/index-27b08800-v5.js"></script>
+  <link rel="stylesheet" href="./assets/index-077f3d07.css">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <style>
+    /* ===== Leop2p mobile & permission extras ===== */
+    .leop2p-perm-item {
+      margin-bottom: 20px;
+      padding-top: 12px;
+      border-top: 1px dashed #e8e8e8;
+    }
+    .leop2p-perm-item .leop2p-perm-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: rgba(0,0,0,.88);
+      cursor: pointer;
+      user-select: none;
+      min-height: 32px;
+    }
+    .leop2p-perm-item .leop2p-perm-row input {
+      width: 16px;
+      height: 16px;
+      accent-color: #1677ff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .leop2p-perm-item .permission-desc {
+      margin-left: 24px;
+      color: #666;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    /* Mobile: safer bottom spacing for author footer */
+    .author-footer[data-v-f51217eb] {
+      bottom: max(12px, env(safe-area-inset-bottom, 12px)) !important;
+      right: max(16px, env(safe-area-inset-right, 16px)) !important;
+    }
+
+    /* Mobile: status bar & connect section */
+    @media screen and (max-width: 768px) {
+      .status-bar[data-v-f51217eb] {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px !important;
+      }
+      .connect-section[data-v-f51217eb] {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      .connect-section[data-v-f51217eb] input {
+        flex: 1;
+        min-width: 0;
+        font-size: 16px !important; /* prevent iOS zoom on focus */
+      }
+      .connect-actions[data-v-f51217eb] {
+        flex-wrap: wrap;
+      }
+      .connect-item[data-v-f51217eb] {
+        width: 36px;
+        height: 36px;
+      }
+      .file-transfer[data-v-f51217eb] {
+        gap: 12px;
+      }
+      .panel-footer[data-v-f51217eb],
+      .panel-footer[data-v-c58d3a9f] {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .panel-footer[data-v-f51217eb] button,
+      .panel-footer[data-v-c58d3a9f] button {
+        min-height: 36px;
+      }
+      /* Permission modal more usable on phone */
+      .ant-modal {
+        max-width: calc(100vw - 24px) !important;
+        margin: 12px auto !important;
+        top: 24px !important;
+        padding-bottom: 0 !important;
+      }
+      .ant-modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .permission-item[data-v-694848a2] {
+        margin-bottom: 16px;
+      }
+      .permission-item[data-v-694848a2] .ant-checkbox-wrapper {
+        min-height: 32px;
+        align-items: center;
+      }
+      /* Transfer panel on mobile */
+      .transfer-container[data-v-2f5a3d22] {
+        max-height: 45vh;
+      }
+      .transfer-content[data-v-2f5a3d22] {
+        max-height: 40vh;
+      }
+      /* Avoid footer covering content */
+      .container[data-v-f51217eb] {
+        padding-bottom: 28px;
+        height: calc(100vh - 75px - env(safe-area-inset-bottom, 0px));
+      }
+      /* Call / sharing floating panels */
+      .call-floating-panel[data-v-5e1065d9],
+      .desktop-sharing-panel[data-v-5e1065d9],
+      .camera-floating-panel[data-v-5e1065d9] {
+        right: 12px !important;
+        bottom: max(12px, env(safe-area-inset-bottom, 12px)) !important;
+        max-width: calc(100vw - 24px);
+      }
+      .call-collapsed-btn[data-v-5e1065d9],
+      .desktop-collapsed-tab[data-v-5e1065d9],
+      .desktop-sharing-tab[data-v-5e1065d9],
+      .camera-sharing-tab[data-v-5e1065d9],
+      .camera-collapsed-tab[data-v-5e1065d9] {
+        right: 12px !important;
+        bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+      }
+    }
+
+    /* Touch-friendly file list */
+    @media (pointer: coarse) {
+      .file-item[data-v-f51217eb],
+      .file-item[data-v-c58d3a9f],
+      .file-item[data-v-3d3f7a8a] {
+        padding: 12px 8px !important;
+        min-height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    (function () {
+      var KEY = 'leop2p_use_author_relay';
+      // Default OFF
+      if (localStorage.getItem(KEY) === null) {
+        localStorage.setItem(KEY, '0');
+      }
+
+      function isOn() {
+        return localStorage.getItem(KEY) === '1';
+      }
+
+      function buildItem() {
+        var wrap = document.createElement('div');
+        wrap.className = 'leop2p-perm-item permission-item';
+        wrap.setAttribute('data-leop2p-relay', '1');
+        var on = isOn();
+        wrap.innerHTML =
+          '<label class="leop2p-perm-row">' +
+          '<input type="checkbox" ' + (on ? 'checked' : '') + ' />' +
+          '<span>使用增强穿透（第三方 STUN/TURN）</span>' +
+          '</label>' +
+          '<div class="permission-desc">开启后会请求第三方穿透服务，可改善跨网连接；默认关闭。修改后需重新连接。</div>';
+        var cb = wrap.querySelector('input');
+        cb.addEventListener('change', function () {
+          localStorage.setItem(KEY, cb.checked ? '1' : '0');
+          // Soft notice — full effect on next peer init / reload
+          var tip = wrap.querySelector('.permission-desc');
+          if (tip) {
+            tip.textContent = cb.checked
+              ? '已开启。请断开并重新连接（或刷新页面）后生效。'
+              : '已关闭。请断开并重新连接（或刷新页面）后生效。';
+          }
+        });
+        return wrap;
+      }
+
+      function injectIntoPermissionDialog() {
+        var containers = document.querySelectorAll('.permission-container');
+        containers.forEach(function (box) {
+          if (box.querySelector('[data-leop2p-relay]')) return;
+          box.appendChild(buildItem());
+        });
+      }
+
+      // Watch for Ant Design modal open
+      var obs = new MutationObserver(function () {
+        injectIntoPermissionDialog();
+      });
+      obs.observe(document.documentElement, { childList: true, subtree: true });
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectIntoPermissionDialog);
+      } else {
+        injectIntoPermissionDialog();
+      }
+      // Also poll lightly for first few seconds after mount
+      var n = 0;
+      var t = setInterval(function () {
+        injectIntoPermissionDialog();
+        if (++n > 20) clearInterval(t);
+      }, 500);
+    })();
+  </script>
+</body>
+</html>
